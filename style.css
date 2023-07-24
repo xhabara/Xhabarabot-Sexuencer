@@ -1,14 +1,46 @@
-html, body {
-  margin: 0;
-  padding: 0;
-}
-canvas {
-  display: block;
-}
-button:hover {
-  background-color: darker-color;
+body {
+    background-color: #202020;
+    color: #f0f0f0;
+    font-family: 'Courier New', Courier, monospace;
 }
 
-button:active {
-  background-color: darkest-color;
+.btn {
+    background-color: #444444;
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+}
+
+.btn:hover {
+    background-color: #C9C3C3;
+    color: white;
+}
+
+.btn:active {
+    background-color: #B4B1B1;
+    color: white;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+.btn-random {
+    background-color: #ff6347; /* Tomato */
+}
+
+.btn-random:hover {
+    background-color: #7C2404; /* OrangeRed */
+}
+
+.btn-random:active {
+    background-color: #b22222; /* FireBrick */
+    color: white;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
 }
