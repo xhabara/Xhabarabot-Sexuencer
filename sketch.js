@@ -8,6 +8,8 @@ let delayFX; // renamed from delay
 let distortion;
 let isDelayOn = false; // track if delay is on
 let isDistortionOn = false; // track if distortion is on
+let autonomousButton; // Declare the button here
+let randomTempoButton;
 
 function preload() {
   const soundUrls = [
@@ -75,6 +77,18 @@ function setup() {
 
   tempoUpButton.position(415, 122);
   tempoDownButton.position(460, 122);
+  
+  autonomousButton = createButton("Xhabarabot Takeover");
+  autonomousButton.mousePressed(toggleAutonomousMode);
+  autonomousButton.class('btn');
+  autonomousButton.position(7, 155);
+
+  randomTempoButton = createButton("Randomize Tempo");
+  randomTempoButton.mousePressed(randomizeTempo);
+  randomTempoButton.class('btn');
+  randomTempoButton.position(380, 155);
+
+
 }
 
 function draw() {
@@ -160,10 +174,75 @@ sequence.push(randomStep);
 }
 }
 
+
+function randomizeTempo() {
+  if (tempo === 500) {
+    // If the tempo is at its normal value, randomize it
+    tempo = Math.floor(Math.random() * 1000) + 10;
+    randomTempoButton.style('background-color', 'green');
+  } else {
+    // If the tempo is randomized, set it back to normal
+    tempo = 500;
+    randomTempoButton.style('background-color', 'rgb(117,113,113)');
+  }
+}
+
+
+let isAutonomousOn = false;
+
+
+function toggleAutonomousMode() {
+  isAutonomousOn = !isAutonomousOn;
+  autonomousButton.style('background-color', isAutonomousOn ? 'red' : 'rgb(96,92,92)');
+
+  if (isAutonomousOn && !isPlaying) {
+    startStopSequence();
+    scheduleAutonomousActions();
+  } else if (!isAutonomousOn) {
+    // If the autonomous mode is turned off, stop the playing sequence
+    if (isPlaying) {
+      startStopSequence(); // This will stop the sequence
+    }
+  }
+}
+
+
+function scheduleAutonomousActions() {
+  if (!isAutonomousOn) {
+    return;
+  }
+
+  setTimeout(() => {
+    const randomAction = Math.floor(Math.random() * 6); // Total of 6 actions now
+    switch (randomAction) {
+      case 0:
+        togglePad(Math.floor(Math.random() * 8));
+        break;
+      case 1:
+        switchOrder();
+        break;
+      case 2:
+        toggleDelay();
+        break;
+      case 3:
+        toggleDistortion();
+        break;
+      case 4:
+        generateRandomSequence();
+        break;
+      case 5:
+        randomizeTempo();
+        break;
+    }
+
+    scheduleAutonomousActions();
+  }, Math.random() * tempo + 100);
+}
+
 function toggleDelay() {
-  isDelayOn = !isDelayOn; // We simply flip the boolean value
+  isDelayOn = !isDelayOn;
 }
 
 function toggleDistortion() {
-  isDistortionOn = !isDistortionOn; // We simply flip the boolean value
+  isDistortionOn = !isDistortionOn;
 }
