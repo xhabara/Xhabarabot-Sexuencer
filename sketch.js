@@ -6,10 +6,12 @@ let isPlaying = false;
 let tempo = 500;
 let delayFX; // renamed from delay
 let distortion;
-let isDelayOn = false; // track if delay is on
-let isDistortionOn = false; // track if distortion is on
-let autonomousButton; // Declare the button here
+let isDelayOn = false; 
+let isDistortionOn = false; 
+let autonomousButton; 
 let randomTempoButton;
+let delayButton;
+let distortionButton;
 
 function preload() {
   const soundUrls = [
@@ -67,11 +69,12 @@ function setup() {
   randomButton.mousePressed(generateRandomSequence);
   randomButton.class('btn btn-random');
 
-  const delayButton = createButton("Delay");
+delayButton = createButton("Delay");
   delayButton.mousePressed(toggleDelay);
   delayButton.class('btn');
 
-  const distortionButton = createButton("Distortion");
+  // Remove the const keyword here
+  distortionButton = createButton("Distortion");
   distortionButton.mousePressed(toggleDistortion);
   distortionButton.class('btn');
 
@@ -142,15 +145,14 @@ function scheduleSequence() {
     scheduleSequence();
   }, tempo);
 }
-
 function playStep(step) {
   if (pads[step].active) {
     const sound = sounds[step];
     sound.stop();
 
-    // We only apply the effects if they're on
+    // Apply the effects if they're on
     if (isDelayOn) {
-      delayFX.process(sound, .5, .3, 2300);
+      delayFX.process(sound, 0.5, 0.3, 2300);
     }
     if (isDistortionOn) {
       distortion.process(sound, 0.03, '2x');
@@ -177,20 +179,15 @@ sequence.push(randomStep);
 
 function randomizeTempo() {
   if (tempo === 500) {
-    // If the tempo is at its normal value, randomize it
     tempo = Math.floor(Math.random() * 1000) + 10;
     randomTempoButton.style('background-color', 'green');
   } else {
-    // If the tempo is randomized, set it back to normal
     tempo = 500;
     randomTempoButton.style('background-color', 'rgb(117,113,113)');
   }
 }
 
-
 let isAutonomousOn = false;
-
-
 function toggleAutonomousMode() {
   isAutonomousOn = !isAutonomousOn;
   autonomousButton.style('background-color', isAutonomousOn ? 'red' : 'rgb(96,92,92)');
@@ -199,13 +196,11 @@ function toggleAutonomousMode() {
     startStopSequence();
     scheduleAutonomousActions();
   } else if (!isAutonomousOn) {
-    // If the autonomous mode is turned off, stop the playing sequence
     if (isPlaying) {
-      startStopSequence(); // This will stop the sequence
+      startStopSequence();
     }
   }
 }
-
 
 function scheduleAutonomousActions() {
   if (!isAutonomousOn) {
@@ -241,8 +236,10 @@ function scheduleAutonomousActions() {
 
 function toggleDelay() {
   isDelayOn = !isDelayOn;
+  delayButton.style('background-color', isDelayOn ? 'green' : 'rgb(117,113,113)');
 }
 
 function toggleDistortion() {
   isDistortionOn = !isDistortionOn;
+  distortionButton.style('background-color', isDistortionOn ? 'red' : 'rgb(117,113,113)');
 }
