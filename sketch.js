@@ -13,6 +13,11 @@ let randomTempoButton;
 let delayButton;
 let distortionButton;
 
+let soundRecorder;
+let recording;
+let isRecording = false;
+let recordButton;
+
 function preload() {
   const soundUrls = [
     "RullyShabaraSampleR05.mp3",
@@ -32,7 +37,7 @@ function preload() {
 
 function setup() {
   createCanvas(500, 110);
-  delayFX = new p5.Delay(); // renamed from delay
+  delayFX = new p5.Delay(); 
   distortion = new p5.Distortion();
 
   for (let i = 0; i < 8; i++) {
@@ -90,6 +95,15 @@ delayButton = createButton("Delay");
   randomTempoButton.mousePressed(randomizeTempo);
   randomTempoButton.class('btn');
   randomTempoButton.position(380, 155);
+
+soundRecorder = new p5.SoundRecorder();
+soundRecorder.setInput();
+recording = new p5.SoundFile();
+
+recordButton = createButton('Start Recording');
+recordButton.position(210, 155);
+recordButton.class('btn');
+recordButton.mousePressed(toggleRecording);
 
 
 }
@@ -150,17 +164,31 @@ function playStep(step) {
     const sound = sounds[step];
     sound.stop();
 
+    // Disconnect any existing effects
+    sound.disconnect();
+    sound.connect(p5.soundOut);
+
+    // Reset the volume to 1 (or whatever you prefer)
+    sound.setVolume(1);
+
     // Apply the effects if they're on
     if (isDelayOn) {
+      sound.disconnect();
+      sound.connect(delayFX);
       delayFX.process(sound, 0.5, 0.3, 2300);
+      // Crank it up, dude!
+      sound.setVolume(2); 
     }
     if (isDistortionOn) {
-      distortion.process(sound, 0.03, '2x');
+      sound.disconnect();
+      sound.connect(distortion);
+      distortion.process(sound, 0.03, '1x');
     }
 
     sound.play();
   }
 }
+
 
 function switchOrder () {
 sequence = sequence.reverse();
@@ -208,10 +236,10 @@ function scheduleAutonomousActions() {
   }
 
   setTimeout(() => {
-    const randomAction = Math.floor(Math.random() * 6); // Total of 6 actions now
+    const randomAction = Math.floor(Math.random() * 16); // Total of 6 actions now
     switch (randomAction) {
       case 0:
-        togglePad(Math.floor(Math.random() * 8));
+        togglePad(Math.floor(Math.random() * 3));
         break;
       case 1:
         switchOrder();
@@ -231,7 +259,7 @@ function scheduleAutonomousActions() {
     }
 
     scheduleAutonomousActions();
-  }, Math.random() * tempo + 100);
+  }, Math.random() * tempo + 500);
 }
 
 function toggleDelay() {
@@ -243,3 +271,21 @@ function toggleDistortion() {
   isDistortionOn = !isDistortionOn;
   distortionButton.style('background-color', isDistortionOn ? 'red' : 'rgb(117,113,113)');
 }
+
+function toggleRecording() {
+  if (!isRecording) {
+    // Start recording
+    soundRecorder.record(recording);
+    isRecording = true;
+    recordButton.html("Stop and Save");
+  } else {
+    // Stop recording and save the file
+    soundRecorder.stop();
+    saveSound(recording, 'XhabarabotSexuencerRecording.wav');
+    isRecording = false;
+    recordButton.html("Start Recording");
+    recording = new p5.SoundFile(); // Reset the recording
+  }
+}
+
+// Created by Rully Shabara
